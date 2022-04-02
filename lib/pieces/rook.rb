@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'piece_base'
+require_relative 'piece_base'
 
 class Rook
   include PieceBase
@@ -12,7 +12,6 @@ class Rook
   end
 
   def possible_moves(direction)
-    
   end
 
   def to_s
