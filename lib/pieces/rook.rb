@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'piece_base'
+require_relative 'piece'
 
+# Please_Insert_Documentation
 class Rook
-  include PieceBase
+  include Piece
 
   def initialize(team_white)
-    @movement_direction = %i[up down left right]
-    @char_representation = team_white ? WROOK : BROOK
+    @mov_dir = %i[UP DOWN LEFT RIGHT]
+    @char_representation = team_white ? WROOK_ICON : BROOK_ICON
     @team_white = team_white
-  end
-
-  def possible_moves(direction)
-  end
-
-  def to_s
-    @char_representation
   end
 end
