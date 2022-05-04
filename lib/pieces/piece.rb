@@ -18,7 +18,8 @@ BPAWN_ICON = "\u2659"
 
 # documentation
 module Piece
-  attr_accessor :curr_pos # 1D array of [x,y] coordinates
+  include GroupedMovementProcs
+
   attr_reader :mov_dir, # (array of symbols, :up, :down etc)
               :char_representation, # Constant
               :team_white # true/false
@@ -29,5 +30,29 @@ module Piece
 
   def include_dir?(direction)
     mov_dir.include?(direction)
+  end
+
+  def king?
+    is_a? King
+  end
+
+  def queen?
+    is_a? Queen
+  end
+
+  def rook?
+    is_a? Rook
+  end
+
+  def bishop?
+    is_a? Bishop
+  end
+
+  def knight?
+    is_a? Knight
+  end
+
+  def pawn?
+    is_a? Pawn
   end
 end
