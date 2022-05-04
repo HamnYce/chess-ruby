@@ -34,8 +34,10 @@ module GroupedMovementProcs
     KNIGHTDOWNLEFT KNIGHTLEFTDOWN
     KNIGHTDOWNRIGHT KNIGHTRIGHTDOWN
   ].freeze
-  WHITEPAWNPATHS = %i[UP UPRIGHT].freeze
-  BLACKPAWNPATHS = %i[DOWNLEFT DOWNRIGHT].freeze
+  WHITEPAWNPATHS = %i[UP UPLEFT UPRIGHT].freeze
+  BLACKPAWNPATHS = %i[DOWN DOWNLEFT DOWNRIGHT].freeze
+  WHITEPAWNATTPATHS = %i[UPLEFT UPRIGHT].freeze
+  BLACKPAWNATTPATHS = %i[DOWNLEFT DOWNRIGHT].freeze
 end
 
 # TODO: make this it's own module called TableMovement (include
@@ -58,6 +60,7 @@ module MovementAlgs
   def possible_moves(curr_pos, direction)
     p_moves = []
 
+    # TODO: maybe change this to a method
     pos = MovementProcs.const_get(direction).call(curr_pos)
 
     while valid_pos?(pos)
@@ -69,9 +72,6 @@ module MovementAlgs
 
     p_moves
   end
-
-  # TODO: implement movement checks here
-  def pawn_possible_moves(curr_pos, direction); end
 
   def knight_possible_moves(curr_pos, direction)
     direction_two = flip_knight_direction(direction)

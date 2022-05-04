@@ -22,21 +22,18 @@ class Board
     return 'no piece at pos' unless piece_exists?(init_pos)
 
     piece = @table[init_pos[0]][init_pos[1]]
-
     dir = direction(init_pos, fin_pos)
 
     return 'piece can\'t move like that' unless piece.include_dir?(dir)
 
-    # TODO: seperate out the pawn movement from capturing.
-    #   you can add all pawn movement and just revert when an illegal move is
-    #   done. (moving diagonally or capturing straight)
-    #   since movement and capturing are considered the same action all you have
-    #   to do is add if statement
     p_moves = piece_moves(piece, init_pos, dir)
 
     return 'piece is blocked' unless p_moves.include?(fin_pos)
     return 'cannot capture own piece' if same_team?(piece, get_piece(fin_pos))
-    return 'pawn cannot move like that' if illegal_pawn_move?(fin_pos, dir)
+
+    if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
+      return 'pawn cannot move like that'
+    end
 
     simulate(init_pos, fin_pos)
 
@@ -110,12 +107,7 @@ class Board
   # pick the direction for possible moves)
   def attack_blockable?(attacker_pos, king_pos, attacker_class); end
 
-  # NOTE: use to check around king in all directions for check? & checkmate?
-  # diagonal paths for bishop || queen || pawn (opposite team)
-  # straight paths for rook || queen (opposite team)
-  # check all movement directions
   # DOC: check if target pos can be attacked by opposite team
-  # this is check
   def can_be_attacked?(defender_pos)
     linear_check(defender_pos, STRAIGHTPATHS, Rook) ||
       linear_check(defender_pos, DIAGPATHS, Bishop) ||
@@ -159,7 +151,7 @@ class Board
   end
 
   def pawn_check(defender_pos)
-    directions = @curr_player_white ? WHITEPAWNPATHS : BLACKPAWNPATHS
+    directions = @curr_player_white ? WHITEPAWNATTPATHS : BLACKPAWNATTPATHS
 
     all_moves = directions.map { |dir| possible_move(defender_pos, dir) }
 
@@ -172,6 +164,11 @@ class Board
     end
 
     false
+  end
+
+  def legal_pawn_move?(fin_pos, dir)
+    (DIAGPATHS.include?(dir) && piece_exists?(fin_pos)) ||
+      (dir == :UP && !piece_exists?(fin_pos))
   end
 
   # DOC: returns direction (symbol)
@@ -191,9 +188,7 @@ class Board
     direction.to_sym
   end
 
-  # FIXME: piece_exists? && diff_team? (maybe create this with nil being false)
-  #   && diagpath || (UP && !piece_exists?)
-  def illegal_pawn_move?(fin_pos, dir); end
+
 
   # returns true if a_piece@team_white != b_piece@team_white
   def same_team?(a_piece, b_piece)
@@ -255,10 +250,12 @@ b = Board.new
 
 gets
 
-b.move([6, 0], [5, 1])
+puts b.move([6, 0], [5, 0])
 
 gets
 
-b.move([7, 1], [5, 2])
+puts b.move([7, 1], [5, 2])
 
 gets
+
+puts b.move([6, 2], [5, 2])
