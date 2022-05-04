@@ -7,11 +7,7 @@ class Knight
   include Piece
 
   def initialize(team_white)
-    @mov_dir = %i[KNIGHTUPLEFT KNIGHTLEFTUP
-                  KNIGHTUPRIGHT KNIGHTRIGHTUP
-                  KNIGHTDOWNLEFT KNIGTLEFTDOWN
-                  KNIGHTDOWNRIGHT KNIGHTRIGHTDOWN]
-
+    @mov_dir = KNIGHTPATHS
     @char_representation = team_white ? WKNIGHT_ICON : BKNIGHT_ICON
     @team_white = team_white
   end

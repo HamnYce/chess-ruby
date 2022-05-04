@@ -6,9 +6,8 @@ require_relative 'piece'
 class Queen
   include Piece
 
-  def initialize(curr_pos, team_white)
-    @curr_pos = curr_pos
-    @mov_dir = %i[UP DOWN LEFT RIGHT UPLEFT UPRIGHT DOWNLEFT DOWNRIGHT]
+  def initialize(team_white)
+    @mov_dir = (STRAIGHTPATHS + DIAGPATHS)
     @char_representation = team_white ? WQUEEN_ICON : BQUEEN_ICON
     @team_white = team_white
   end
