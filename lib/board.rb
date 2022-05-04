@@ -3,57 +3,93 @@
 require_relative 'init'
 require_relative 'pieces/piece'
 require_relative 'movement'
+require_relative 'serialisation'
 
 # insert_documentation_here
 class Board
   include Piece
   include MovementAlgs
+  include Serialiser
 
-  # TODO: convert implementation of @table to hash
+
+  # TODO: convert implementation of @table to hash (at the end)
   def initialize
     @table = STARTING_BOARD
     @wking_pos = [0, 4]
     @bking_pos = [7, 4]
     @curr_player_white = true
     print_table
+    turn
+  end
+
+  # TODO: menu options:
+  #   e (exit), s (save), se (save & exit), l (load)
+  #   create module for saving
+  def turn
+    puts 'enter e to exit or positions to move pieces'
+    input = gets.chomp.split
+
+    load_game if input[0] == 'l'
+
+    until input[0][-1] == 'e'
+      init_pos = parse(input[0])
+      fin_pos = parse(input[1])
+
+      puts move(init_pos, fin_pos)
+
+      input = gets.chomp.split
+      save_game if input.first == 's'
+    end
+    puts 'game ended'
+  end
+
+  # NOTE: converts from chess notation to pos notation
+  def parse(input)
+    input = input.split('').reverse
+    input[0] = 8 - input[0].to_i
+    input[1] = input[1].ord - 97
+    input
   end
 
   def move(init_pos, fin_pos)
-    return 'no piece at pos' unless piece_exists?(init_pos)
+    return response('no piece') unless piece_exists?(init_pos)
 
     piece = @table[init_pos[0]][init_pos[1]]
     dir = direction(init_pos, fin_pos)
 
-    return 'piece can\'t move like that' unless piece.include_dir?(dir)
+    return response('no dir') unless piece.include_dir?(dir)
 
     p_moves = piece_moves(piece, init_pos, dir)
 
-    return 'piece is blocked' unless p_moves.include?(fin_pos)
-    return 'cannot capture own piece' if same_team?(piece, get_piece(fin_pos))
+    return response('not legal') unless p_moves.include?(fin_pos)
+    return response('friendly fire') if same_team?(piece, get_piece(fin_pos))
 
     if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
-      return 'pawn cannot move like that'
+      return response('rogue pawn')
     end
 
     simulate(init_pos, fin_pos)
 
-    return revert_simulation if can_be_attacked?(current_king_pos)
+    if can_be_attacked?(current_king_pos)
+      revert_simulation
+      return response('self check')
+    end
+
     return 'Checkmate!' if checkmate?(other_king_pos)
 
-    # Updating king position if king is the one that moved
     update_curr_king_pos(fin_pos) if @attacker[1].king?
 
     system('clear')
     print_table
 
     flip_current_player
+    'success move'
   end
 
   def piece_moves(piece, init_pos, dir)
-    case piece
-    when Knight
+    if piece.knight?
       knight_possible_moves(init_pos, dir)
-    when King || Pawn
+    elsif piece.king? || piece.pawn?
       possible_move(init_pos, dir)
     else
       possible_moves(init_pos, dir)
@@ -74,7 +110,7 @@ class Board
     row, col = @defender[0]
     @table[row][col] = @defender[1]
 
-    'illegal move, own king is in check'
+
   end
 
   def move_and_overwrite(init_pos, fin_pos)
@@ -98,8 +134,6 @@ class Board
 
   def king_can_move?(king_pos)
     all_moves = KINGPATHS.map { |dir| possible_move(king_pos, dir) }
-
-    all_moves.compact.each { |pos| return true unless piece_exists?(pos) }
   end
 
   # assuming it's not a knight
@@ -225,6 +259,7 @@ class Board
     piece.team_white != @curr_player_white
   end
 
+  # TODO: create module for ANY & ALL methods containing string || puts
   def print_table
     puts '   --- --- --- --- --- --- --- ---'
     @table.each_with_index do |row, i|
@@ -239,11 +274,15 @@ class Board
     puts '    a   b   c   d   e   f   g   h '
   end
 
-  # example user input:
-  # init_a,init_b int,letter
-  # fin_a,fin_b int, letter
-  def translate
+  def response(code)
+    { 'no piece' => 'sorry there is no piece at given starting position',
+      'no dir' => 'sorry piece can\'t move in that direction',
+      'not legal' => 'not legal move',
+      'friendly fire' => 'cannot capture own piece',
+      'rogue pawn' => 'pawn cannot move like that',
+      'self check' => 'your own king is in check!'}[code]
   end
+
 end
 
 b = Board.new
