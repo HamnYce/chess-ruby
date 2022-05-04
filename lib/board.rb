@@ -8,7 +8,6 @@ require_relative 'movement'
 class Board
   include Piece
   include MovementAlgs
-  include GroupedMovementProcs
 
   # TODO: convert implementation of @table to hash
   def initialize
@@ -57,7 +56,7 @@ class Board
     case piece
     when Knight
       knight_possible_moves(init_pos, dir)
-    when Pawn || King
+    when King || Pawn
       possible_move(init_pos, dir)
     else
       possible_moves(init_pos, dir)
@@ -81,7 +80,6 @@ class Board
     'illegal move, own king is in check'
   end
 
-  # copies piece reference to fin_pos and removes reference from init_pos
   def move_and_overwrite(init_pos, fin_pos)
     attacker = @table[init_pos[0]][init_pos[1]]
 
@@ -89,17 +87,18 @@ class Board
     @table[init_pos[0]][init_pos[1]] = nil
   end
 
-  # use @current_player_white to figure out which king
+  # TODO: can_be_attacked? on the spaces around the king (can king move away?)
+  #   on other_king_pos.
+  #   can_be_attacked? on spaces between king and attacker (can attack be
+  #   blocked)
+  #   can_be_attacked? on attacking piece (can attacker be captured)
   def checkmate?(king_pos)
     # if piece can't move out of the way
     # cant block
     # piece attacker isn't capturable
   end
 
-  # check all surrounding panels from the other_king(use king movement)
-  # TODO: Implement can_be_attacked? first then just check the spaces around the king
-  #   use this for checkmate on other_king_pos
-  #   check space around king to see if he has a possible move, for checkmate
+
   def king_can_move?(king_pos)
     all_moves = KINGPATHS.map { |dir| possible_move(king_pos, dir) }
 
