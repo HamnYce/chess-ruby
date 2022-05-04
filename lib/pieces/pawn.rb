@@ -6,10 +6,10 @@ require_relative 'piece'
 class Pawn
   include Piece
 
-  def initialize(curr_pos, team_white)
+  def initialize(team_white)
     # NOTE: if statement for mov_dir (black or white team move different direction)
     # because pawn movement has directionality
-    @mov_dir = team_white ? %i[UPLEFT UPRIGHT] : %i[DOWNLEFT DOWNRIGHT]
+    @mov_dir = team_white ? WHITEPAWNPATHS : BLACKPAWNPATHS
     @char_representation = team_white ? WPAWN_ICON : BPAWN_ICON
     @team_white = team_white
   end
