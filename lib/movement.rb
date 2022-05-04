@@ -2,10 +2,6 @@
 
 # contains procs for each movement direction (ALL off them) :up, :down etc
 module MovementProcs
-  # TODO: create Proc as CONSTANT
-  # TODO: create procs and use loop in PieceBase#possible_moves (stop when need)
-  # NOTE: let the procs only go in direction by ONE. then the piece can loop and
-  #   yield to it!!!!!
   UP = proc { |x, y| [x - 1, y] }
   DOWN = proc { |x, y| [x + 1, y] }
   LEFT = proc { |x, y| [x, y - 1] }
@@ -28,6 +24,22 @@ module MovementProcs
   KNIGHTRIGHTDOWN = proc { |x, y| [x + 1, y + 2] }
 end
 
+module GroupedMovementProcs
+  STRAIGHTPATHS = %i[UP DOWN RIGHT LEFT].freeze
+  DIAGPATHS = %i[UPLEFT UPRIGHT DOWNLEFT DOWNRIGHT].freeze
+  KINGPATHS = (STRAIGHTPATHS + DIAGPATHS).freeze
+  KNIGHTPATHS = %i[
+    KNIGHTUPLEFT KNIGHTLEFTUP
+    KNIGHTUPRIGHT KNIGHTRIGHTUP
+    KNIGHTDOWNLEFT KNIGHTLEFTDOWN
+    KNIGHTDOWNRIGHT KNIGHTRIGHTDOWN
+  ].freeze
+  WHITEPAWNPATHS = %i[UP UPRIGHT].freeze
+  BLACKPAWNPATHS = %i[DOWNLEFT DOWNRIGHT].freeze
+end
+
+# TODO: make this it's own module called TableMovement (include
+# GroupedMovementProcs)
 # top level documentation
 module MovementAlgs
   include MovementProcs
@@ -35,14 +47,14 @@ module MovementAlgs
   def possible_move(curr_pos, direction)
     p_moves = []
 
-    pos = MovementProc.const_get(direction).call(curr_pos)
+    pos = MovementProcs.const_get(direction).call(curr_pos)
 
     p_moves << pos if valid_pos?(pos)
 
     p_moves
   end
 
-  # DOC: returns array of posible moves in given direction
+  # DOC: returns array of possible moves in given direction
   def possible_moves(curr_pos, direction)
     p_moves = []
 
@@ -51,10 +63,15 @@ module MovementAlgs
     while valid_pos?(pos)
       p_moves << pos
       pos = MovementProcs.const_get(direction).call(pos)
+
+      return p_moves << pos if piece_exists?(pos)
     end
 
     p_moves
   end
+
+  # TODO: implement movement checks here
+  def pawn_possible_moves(curr_pos, direction); end
 
   def knight_possible_moves(curr_pos, direction)
     direction_two = flip_knight_direction(direction)
@@ -64,6 +81,7 @@ module MovementAlgs
 
     pos = MovementProcs.const_get(direction).call(curr_pos)
     p_moves << pos if valid_pos?(pos)
+
     pos = MovementProcs.const_get(direction_two).call(curr_pos)
     p_moves << pos if valid_pos?(pos)
 
@@ -80,5 +98,12 @@ module MovementAlgs
 
   def valid_pos?(pos)
     pos[0].between?(0, 7) && pos[1].between?(0, 7)
+  end
+
+  # DOC: checks if piece exists at pos
+  def piece_exists?(pos)
+    return false if pos.empty?
+
+    !@table[pos[0]][pos[1]].nil?
   end
 end
