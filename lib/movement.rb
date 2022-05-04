@@ -40,8 +40,6 @@ module GroupedMovementProcs
   BLACKPAWNATTPATHS = %i[DOWNLEFT DOWNRIGHT].freeze
 end
 
-# TODO: make this it's own module called TableMovement (include
-# GroupedMovementProcs)
 # top level documentation
 module MovementAlgs
   include MovementProcs
@@ -49,7 +47,7 @@ module MovementAlgs
   def possible_move(curr_pos, direction)
     p_moves = []
 
-    pos = MovementProcs.const_get(direction).call(curr_pos)
+    pos = next_pos(direction, curr_pos)
 
     p_moves << pos if valid_pos?(pos)
 
@@ -60,12 +58,11 @@ module MovementAlgs
   def possible_moves(curr_pos, direction)
     p_moves = []
 
-    # TODO: maybe change this to a method
-    pos = MovementProcs.const_get(direction).call(curr_pos)
+    pos = next_pos(direction, curr_pos)
 
     while valid_pos?(pos)
       p_moves << pos
-      pos = MovementProcs.const_get(direction).call(pos)
+      pos = next_pos(direction, pos)
 
       return p_moves << pos if piece_exists?(pos)
     end
@@ -79,10 +76,10 @@ module MovementAlgs
 
     p_moves = []
 
-    pos = MovementProcs.const_get(direction).call(curr_pos)
+    pos = next_pos(direction, curr_pos)
     p_moves << pos if valid_pos?(pos)
 
-    pos = MovementProcs.const_get(direction_two).call(curr_pos)
+    pos = next_pos(direction_two, curr_pos)
     p_moves << pos if valid_pos?(pos)
 
     p_moves
@@ -105,5 +102,9 @@ module MovementAlgs
     return false if pos.empty?
 
     !@table[pos[0]][pos[1]].nil?
+  end
+
+  def next_pos(direction, curr_pos)
+    MovementProcs.const_get(direction).call(curr_pos)
   end
 end
