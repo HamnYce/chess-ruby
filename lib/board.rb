@@ -208,7 +208,7 @@ class Board
   def pawn_check(defender_pos)
     directions = @curr_player_white ? WHITEPAWNATTPATHS : BLACKPAWNATTPATHS
 
-    all_moves = directions.map { |dir| possible_move(defender_pos, dir) }
+    all_moves = directions.map { |dir| possible_move(defender_pos, dir).last }
 
     all_moves.compact.each do |attacker_pos|
       next unless piece_exists?(attacker_pos)
@@ -223,7 +223,7 @@ class Board
 
   def legal_pawn_move?(fin_pos, dir)
     (DIAGPATHS.include?(dir) && piece_exists?(fin_pos)) ||
-      (dir == :UP && !piece_exists?(fin_pos))
+      ([:UP, :DOWN].include?(dir) && !piece_exists?(fin_pos))
   end
 
   # DOC: returns direction (symbol)
