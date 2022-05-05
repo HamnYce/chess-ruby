@@ -41,8 +41,18 @@ module GroupedMovementProcs
 end
 
 # top level documentation
-module MovementAlgs
+module MovementAlgorithms
   include MovementProcs
+
+  def piece_moves(piece, init_pos, dir)
+    if piece.knight?
+      knight_possible_moves(init_pos, dir)
+    elsif piece.king? || piece.pawn?
+      possible_move(init_pos, dir)
+    else
+      possible_moves(init_pos, dir)
+    end
+  end
 
   def possible_move(curr_pos, direction)
     p_moves = []
@@ -61,10 +71,10 @@ module MovementAlgs
     pos = next_pos(direction, curr_pos)
 
     while valid_pos?(pos)
+      return p_moves << pos if piece_exists?(pos)
+
       p_moves << pos
       pos = next_pos(direction, pos)
-
-      return p_moves << pos if piece_exists?(pos)
     end
 
     p_moves
