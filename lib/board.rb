@@ -59,15 +59,22 @@ class Board
   end
 
   def move(init_pos, fin_pos)
+    # change phases into methods
+
+    # Phase 1 conditions
     return response('no piece') unless piece_exists?(init_pos)
 
     piece = @table[init_pos[0]][init_pos[1]]
+    # Phase 2 conditions
+    return response('wrong team') if other_team?(piece)
+
     dir = direction(init_pos, fin_pos)
 
     return response('no dir') unless piece.include_dir?(dir)
 
     p_moves = piece_moves(piece, init_pos, dir)
 
+    # Phase 3 conditions
     return response('not legal') unless p_moves.include?(fin_pos)
     return response('friendly fire') if same_team?(piece, get_piece(fin_pos))
 
@@ -77,6 +84,7 @@ class Board
 
     simulate(init_pos, fin_pos)
 
+    # Phase 4 conditions
     if can_be_attacked?(current_king_pos)
       revert_simulation
       return response('self check')
@@ -86,11 +94,17 @@ class Board
 
     update_curr_king_pos(fin_pos) if @attacker[1].king?
 
+    # Phase 5 conditions
+    # return 'Checkmate!' if checkmate?
+
+
+    flip_current_player
+
+    # maybe move system('clear') into the print function
     system('clear')
     print_table
 
-    flip_current_player
-    'success move'
+    'successful move'
   end
 
   def piece_moves(piece, init_pos, dir)
