@@ -23,23 +23,30 @@ class Board
   end
 
   # TODO: menu options:
-  #   e (exit), s (save), se (save & exit), l (load)
+  #   e (exit), s (save), se (save & exit), l (load), h (help)
   #   create module for saving
   def turn
-    puts 'enter e to exit or positions to move pieces'
-    input = gets.chomp.split
+    puts "enter e to exit or positions to move from/to\nformat: a1 a2"
+    input = gets.chomp
 
-    load_game if input[0] == 'l'
+    # TODO: create load menu (let it read from a folder called loads method
+    #   inside module Serialiser)
+    load_game if input == 'l'
 
-    until input[0][-1] == 'e'
+    until input[-1] == 'e'
+      input = input.split
+      # TODO: add regex for input to avoid exception raising
       init_pos = parse(input[0])
       fin_pos = parse(input[1])
 
       puts move(init_pos, fin_pos)
 
-      input = gets.chomp.split
-      save_game if input.first == 's'
+      puts 'input:'
+      input = gets.chomp
+
+      save_game if input[0] == 'se'
     end
+
     puts 'game ended'
   end
 
