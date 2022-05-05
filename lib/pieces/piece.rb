@@ -21,7 +21,7 @@ module Piece
   include GroupedMovementProcs
 
   attr_reader :mov_dir, # (array of symbols, :up, :down etc)
-              :char_representation, # Constant
+              :char_representation, # unicode Constant
               :team_white # true/false
 
   def to_s

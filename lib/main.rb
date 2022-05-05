@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-require_relative 'piece_base'
+require_relative 'board'
 
