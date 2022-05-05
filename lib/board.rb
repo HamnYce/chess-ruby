@@ -15,8 +15,8 @@ class Board
   # TODO: convert implementation of @table to hash (at the end)
   def initialize
     @table = STARTING_BOARD
-    @wking_pos = [0, 4]
-    @bking_pos = [7, 4]
+    @wking_pos = [7, 4]
+    @bking_pos = [0, 4]
     @curr_player_white = true
     print_table
     turn
