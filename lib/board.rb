@@ -3,14 +3,21 @@
 require_relative 'init'
 require_relative 'pieces/piece'
 require_relative 'movement'
-require_relative 'serialisation'
+require_relative 'serializer'
+require_relative 'simulator'
+require_relative 'checker'
+require_relative 'gui'
+require_relative 'board_helper'
 
 # insert_documentation_here
 class Board
   include Piece
-  include MovementAlgs
-  include Serialiser
-
+  include MovementAlgorithms
+  include Serializer
+  include Simulator
+  include Checker
+  include Gui
+  include BoardHelper
 
   # TODO: convert implementation of @table to hash (at the end)
   def initialize
@@ -107,41 +114,7 @@ class Board
     'successful move'
   end
 
-  def piece_moves(piece, init_pos, dir)
-    if piece.knight?
-      knight_possible_moves(init_pos, dir)
-    elsif piece.king? || piece.pawn?
-      possible_move(init_pos, dir)
-    else
-      possible_moves(init_pos, dir)
-    end
-  end
-
-  def simulate(init_pos, fin_pos)
-    @attacker = [init_pos, get_piece(init_pos)]
-    @defender = [fin_pos, get_piece(fin_pos)]
-
-    move_and_overwrite(init_pos, fin_pos)
-  end
-
-  def revert_simulation
-    row, col = @attacker[0]
-    @table[row][col] = @attacker[1]
-
-    row, col = @defender[0]
-    @table[row][col] = @defender[1]
-
-
-  end
-
-  def move_and_overwrite(init_pos, fin_pos)
-    attacker = @table[init_pos[0]][init_pos[1]]
-
-    @table[fin_pos[0]][fin_pos[1]] = attacker
-    @table[init_pos[0]][init_pos[1]] = nil
-  end
-
-  # TODO: can_be_attacked? on the spaces around the king (can king move away?)
+  # NOTE: can_be_attacked? on the spaces around the king (can king move away?)
   #   on other_king_pos.
   #   can_be_attacked? on spaces between king and attacker (can attack be
   #   blocked)
