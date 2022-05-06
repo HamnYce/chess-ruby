@@ -11,15 +11,12 @@ require_relative 'board_helper'
 
 # insert_documentation_here
 class Board
-  include Piece
-  include MovementAlgorithms
   include Serializer
   include Simulator
   include Checker
   include Gui
   include BoardHelper
 
-  # TODO: convert implementation of @table to hash (at the end)
   def initialize
     @table = STARTING_BOARD
     @wking_pos = [7, 4]
@@ -29,20 +26,22 @@ class Board
     turn
   end
 
-  # TODO: menu options:
-  #   e (exit), s (save), se (save & exit), l (load), h (help)
-  #   create module for saving
+  # TODO: convert implementation of @table to hash (at the end)
+  # TODO: menu options: create menu (check gui.rb)
+  # TODO: add regex for input to avoid exception raising
+  # TODO: pawn should be able to move 2 squares on initial movement
+  # TODO: test checkmate (RSpec)
+  # TODO: pawn upgrade once it gets to end (create separate menu)
+
   def turn
     puts "enter e to exit or positions to move from/to\nformat: a1 a2"
     input = gets.chomp
 
-    # TODO: create load menu (let it read from a folder called loads method
-    #   inside module Serialiser)
+
     load_game if input == 'l'
 
     until input[-1] == 'e'
       input = input.split
-      # TODO: add regex for input to avoid exception raising
       init_pos = parse(input[0])
       fin_pos = parse(input[1])
 
