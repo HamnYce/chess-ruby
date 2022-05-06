@@ -12,21 +12,15 @@ module Checker
   include MovementAlgorithms
   include GroupedMovementProcs
 
-  def checkmate?
-    !king_can_move? &&
-      !can_be_attacked?(attacker_pos) &&
-      can_be_attacked?(king_pos)
-  end
+  def checkmate?; end
 
-  def king_can_move?
-    king = get_piece(other_king_pos)
+  def king_can_move?(king_pos)
+    king = get_piece(king_pos)
     all_moves = KINGPATHS.map { |dir| possible_move(other_king_pos, dir).last }
     all_moves.compact.each do |pos|
 
-      # if position around king is not under attack AND there exists an
-      # opposite colored piece OR no piece at all then king can move
-
-      return true if !can_be_attacked?(pos) && !same_team?(king, get_piece(pos))
+      return true if !can_be_attacked?(pos, !king.team_white) &&
+                     !same_team?(king, get_piece(pos))
     end
     false
   end
