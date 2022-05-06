@@ -26,11 +26,12 @@ class Board
     turn
   end
 
+  # TODO: test checkmate (RSpec)
+  # TODO: create save files to test out all the functionalities (later you
+  #   can change / include cool puzzles)
   # TODO: convert implementation of @table to hash (at the end)
   # TODO: menu options: create menu (check gui.rb)
   # TODO: add regex for input to avoid exception raising
-  # TODO: pawn should be able to move 2 squares on initial movement
-  # TODO: test checkmate (RSpec)
   # TODO: pawn upgrade once it gets to end (create separate menu)
 
   def turn
@@ -83,10 +84,9 @@ class Board
     # Phase 3 conditions
     return response('not legal') unless p_moves.include?(fin_pos)
     return response('friendly fire') if same_team?(piece, get_piece(fin_pos))
+    return response('rogue pawn') if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
 
-    if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
-      return response('rogue pawn')
-    end
+    piece.moved if piece.pawn?
 
     simulate(init_pos, fin_pos)
 

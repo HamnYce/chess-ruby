@@ -42,13 +42,15 @@ end
 
 # top level documentation
 module MovementAlgorithms
-  include MovementProcs
-
   def piece_moves(piece, init_pos, dir)
     if piece.knight?
       knight_possible_moves(init_pos, dir)
-    elsif piece.king? || piece.pawn?
+    elsif piece.king?
       possible_move(init_pos, dir)
+    elsif piece.pawn?
+      pos = possible_move(init_pos, dir)
+      pos += possible_move(pos[0], dir) if piece.first_move
+      pos
     else
       possible_moves(init_pos, dir)
     end
