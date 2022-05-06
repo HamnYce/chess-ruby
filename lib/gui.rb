@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Gui
+  #   e (exit), s (save), se (save & exit), l (load), h (help)
+  #   create module for saving
   def print_table
     puts '   --- --- --- --- --- --- --- ---'
     @table.each_with_index do |row, i|

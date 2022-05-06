@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'movement'
+
 module BoardHelper
+  include GroupedMovementProcs
+  include MovementAlgorithms
+
   # DOC: returns direction (symbol)
   def direction(init_pos, fin_pos)
     direction = ''
