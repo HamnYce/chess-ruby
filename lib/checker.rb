@@ -37,32 +37,26 @@ module Checker
   def attack_blockable?(attacker_pos, king_pos, attacker_class); end
 
   # DOC: check if target pos can be attacked by opposite team
-  def can_be_attacked?(defender_pos)
-    linear_check(defender_pos, STRAIGHTPATHS) ||
-      linear_check(defender_pos, DIAGPATHS) ||
-      knight_check(defender_pos) ||
-      pawn_check(defender_pos)
+  def can_be_attacked?(defender_pos, att_team)
+    linear_check(defender_pos, STRAIGHTPATHS, att_team) ||
+      linear_check(defender_pos, DIAGPATHS, att_team) ||
+      knight_check(defender_pos, att_team) ||
+      pawn_check(defender_pos, att_team) ||
+      king_check(defender_pos, att_team)
   end
 
-  def linear_check(defender_pos, directions)
-    # for each direction we get the last possible movement using
-    # possible_moves & last
-    # this gives us an array with positions that should either be an empty
-    # space next to a wall or occupied by a piece
+  def linear_check(defender_pos, directions, att_team)
+    # get the first piece in a given direction
     all_moves = directions.map { |dir| possible_moves(defender_pos, dir).last }
     all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+    all_moves.map! { |pos| get_piece(pos) }
 
-    puts "all: #{all_moves}"
-    all_moves.each do |attacker_pos|
-      # skip if no piece at pos
-      next unless piece_exists?(attacker_pos)
-
-      piece = get_piece(attacker_pos)
-
+    all_moves.each do |piece|
       # if piece is opposite team and appropriate piece then defender_piece is
       # under attack
       if (piece.queen? || (piece.rook? && directions == STRAIGHTPATHS) ||
-        (piece.bishop? && directions == DIAGPATHS)) && other_team?(piece)
+         (piece.bishop? && directions == DIAGPATHS)) &&
+         (piece.team_white == att_team)
         return true
       end
     end
@@ -70,31 +64,28 @@ module Checker
     false
   end
 
-  def knight_check(defender_pos)
+  def knight_check(defender_pos, att_team)
     all_moves = KNIGHTPATHS.map { |dir| possible_move(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+    all_moves.map! { |pos| get_piece(pos) }
 
-    all_moves.compact.each do |attacker_pos|
-      next unless piece_exists?(attacker_pos)
+    all_moves.each do |piece|
 
-      piece = get_piece(attacker_pos)
-
-      return true if other_team?(piece) && piece.knight?
+      return true if piece.team_white == att_team && piece.knight?
     end
 
     false
   end
 
-  def pawn_check(defender_pos)
+  def pawn_check(defender_pos, att_team)
     directions = @curr_player_white ? WHITEPAWNATTPATHS : BLACKPAWNATTPATHS
 
     all_moves = directions.map { |dir| possible_move(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+    all_moves.map! { |pos| get_piece(pos) }
 
-    all_moves.compact.each do |attacker_pos|
-      next unless piece_exists?(attacker_pos)
-
-      piece = get_piece(attacker_pos)
-
-      return true if other_team?(piece) && piece.pawn?
+    all_moves.each do |piece|
+      return true if piece.team_white == att_team && piece.pawn?
     end
 
     false
