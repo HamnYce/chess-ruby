@@ -86,7 +86,6 @@ class Board
     return response('friendly fire') if same_team?(piece, get_piece(fin_pos))
     return response('rogue pawn') if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
 
-    piece.moved if piece.pawn?
 
     simulate(init_pos, fin_pos)
 
@@ -96,7 +95,9 @@ class Board
       return response('self check')
     end
 
-    update_curr_king_pos(fin_pos) if @attacker[1].king?
+    piece.moved if piece.pawn?
+
+
 
     # Phase 5 conditions
     # return 'Checkmate!' if checkmate?

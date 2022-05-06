@@ -7,6 +7,8 @@ module Simulator
     @defender = [fin_pos, get_piece(fin_pos)]
 
     move_and_overwrite(init_pos, fin_pos)
+
+    update_curr_king_pos(fin_pos) if @attacker[1].king?
   end
 
   def revert_simulation
@@ -15,6 +17,8 @@ module Simulator
 
     row, col = @defender[0]
     @table[row][col] = @defender[1]
+
+    update_curr_king_pos(@attacker[0]) if @attacker[1].king?
   end
 
   def move_and_overwrite(init_pos, fin_pos)
