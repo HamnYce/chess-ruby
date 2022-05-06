@@ -19,13 +19,16 @@ class Board
 
   def initialize
     @table = STARTING_BOARD
-    @wking_pos = [7, 4]
-    @bking_pos = [0, 4]
+    # @wking_pos = [7, 4]
+    # @bking_pos = [0, 4]
+    @wking_pos = [0, 0]
+    @bking_pos = [2, 0]
     @curr_player_white = true
     print_table
     turn
   end
 
+  # TODO: add section on the side that shows captured pieces
   # TODO: test checkmate (RSpec)
   # TODO: create save files to test out all the functionalities (later you
   #   can change / include cool puzzles)
@@ -37,7 +40,6 @@ class Board
   def turn
     puts "enter e to exit or positions to move from/to\nformat: a1 a2"
     input = gets.chomp
-
 
     load_game if input == 'l'
 
@@ -90,7 +92,7 @@ class Board
     simulate(init_pos, fin_pos)
 
     # Phase 4 conditions
-    if can_be_attacked?(current_king_pos)
+    if can_be_attacked?(current_king_pos, !@curr_player_white)
       revert_simulation
       return response('self check')
     end
@@ -100,7 +102,7 @@ class Board
 
 
     # Phase 5 conditions
-    # return 'Checkmate!' if checkmate?
+    return 'Checkmate!' if checkmate?
 
 
     flip_current_player
