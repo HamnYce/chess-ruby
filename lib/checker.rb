@@ -99,4 +99,16 @@ module Checker
 
     false
   end
+
+  def king_check(defender_pos, att_team)
+    directions = STRAIGHTPATHS + DIAGPATHS
+
+    all_moves = directions.map { |dir| possible_move(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+    all_moves.map! { |pos| get_piece(pos) }
+
+    all_moves.each do |piece|
+      return true if piece.team_white == att_team && piece.king?
+    end
+  end
 end
