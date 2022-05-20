@@ -102,9 +102,10 @@ class Board
       return response('self check')
     end
 
-    piece.moved if piece.pawn?
-
-
+    if piece.pawn?
+      piece.moved
+      upgrade_pawn(fin_pos, @curr_player_white) if pawn_reached_end?(fin_pos)
+    end
 
     # Phase 5 conditions
     return 'Checkmate!' if checkmate?
@@ -117,6 +118,30 @@ class Board
     print_table
 
     'successful move'
+  end
+
+  def pawn_reached_end?(pos)
+    @curr_player_white && pos[0] == 0 || !@curr_player_white && pos[0] == 7
+  end
+
+  # FIXME: input validation
+  def upgrade_pawn(pos, team)
+    print_upgrade_screen(team)
+    c = gets.chomp.to_i
+    new_piece = case c
+               when 1
+                Queen.new(team)
+               when 2
+                Rook.new(team)
+               when 3
+                Bishop.new(team)
+               when 4
+                Knight.new(team)
+               else
+                @table[pos[0]][pos[1]]
+               end
+
+    @table[pos[0]][pos[1]] = new_piece
   end
 end
 
