@@ -75,61 +75,115 @@ module Checker
       king_check(defender_pos, att_team)
   end
 
-  def linear_check(defender_pos, directions, att_team)
-    # get the first piece in a given direction
-    all_moves = directions.map { |dir| possible_moves(defender_pos, dir).last }
-    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
-    all_moves.map! { |pos| get_piece(pos) }
+  def under_block?(defender_pos, att_team)
+    linear_check(defender_pos, STRAIGHTPATHS, att_team) ||
+      linear_check(defender_pos, DIAGPATHS, att_team) ||
+      knight_check(defender_pos, att_team) ||
+      pawn_check(defender_pos, att_team, false) ||
+      king_check(defender_pos, att_team)
+  end
 
-    all_moves.each do |piece|
-      # if piece is opposite team and appropriate piece then defender_piece is
-      # under attack
-      if (piece.queen? || (piece.rook? && directions == STRAIGHTPATHS) ||
-         (piece.bishop? && directions == DIAGPATHS)) &&
-         (piece.team_white == att_team)
-        return true
-      end
-    end
+  def linear_check(defender_pos, dir, att_team)
+    linear_stub(defender_pos, dir, att_team) { |_result, _pos| return true }
+  end
 
-    false
+  def linear_attackers(defender_pos, dir, att_team)
+    linear_stub(defender_pos, dir, att_team) { |result, pos| result << pos }
   end
 
   def knight_check(defender_pos, att_team)
-    all_moves = KNIGHTPATHS.map { |dir| possible_move(defender_pos, dir).last }
-    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
-    all_moves.map! { |pos| get_piece(pos) }
-
-    all_moves.each do |piece|
-
-      return true if piece.team_white == att_team && piece.knight?
-    end
-
-    false
+    knight_stub(defender_pos, att_team) { |_result, _pos| return true }
   end
 
-  def pawn_check(defender_pos, att_team)
-    directions = @curr_player_white ? WHITEPAWNATTPATHS : BLACKPAWNATTPATHS
+  def knight_attackers(defender_pos, att_team)
+    knight_stub(defender_pos, att_team) { |result, pos| result << pos }
+  end
 
-    all_moves = directions.map { |dir| possible_move(defender_pos, dir).last }
-    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
-    all_moves.map! { |pos| get_piece(pos) }
+  def pawn_check(defender_pos, att_team, att)
+    pawn_stub(defender_pos, att_team, att) { |_result, _pos| return true }
+  end
 
-    all_moves.each do |piece|
-      return true if piece.team_white == att_team && piece.pawn?
-    end
-
-    false
+  def pawn_attackers(defender_pos, att_team, att)
+    pawn_stub(defender_pos, att_team, att) { |result, pos| result << pos }
   end
 
   def king_check(defender_pos, att_team)
-    directions = STRAIGHTPATHS + DIAGPATHS
+    king_stub(defender_pos, att_team) { |_result, _pos| return true }
+  end
+
+  def king_attackers(defender_pos, att_team)
+    king_stub(defender_pos, att_team) { |result, pos| result << pos }
+  end
+
+  def linear_stub(defender_pos, directions, att_team, &blk)
+    # get the first piece in a given direction
+    result = []
+
+    all_moves = directions.map { |dir| possible_moves(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+
+    all_moves.each do |pos|
+      piece = get_piece(pos)
+
+      next unless
+        (piece.queen? || (piece.rook? && directions == STRAIGHTPATHS) ||
+          (piece.bishop? && directions == DIAGPATHS)) &&
+          (piece.team_white == att_team)
+
+      blk.call(result, pos)
+    end
+    result.empty? ? false : result
+  end
+
+  def knight_stub(defender_pos, att_team, &blk)
+    result = []
+
+    all_moves = KNIGHTPATHS.map { |dir| possible_move(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+
+    all_moves.each do |pos|
+      piece = get_piece(pos)
+
+      blk.call(result, pos) if piece.team_white == att_team && piece.knight?
+    end
+
+    result.empty? ? false : result
+  end
+
+  def pawn_stub(defender_pos, att_team, att)
+    result = []
+
+    directions = if att
+                   @curr_player_white ? WHITEPAWNATTPATHS : BLACKPAWNATTPATHS
+                 else
+                   @curr_player_white ? WHITEPAWNBLOCKPATHS : BLACKPAWNBLOCKPATHS
+                 end
 
     all_moves = directions.map { |dir| possible_move(defender_pos, dir).last }
     all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
-    all_moves.map! { |pos| get_piece(pos) }
 
-    all_moves.each do |piece|
-      return true if piece.team_white == att_team && piece.king?
+    all_moves.each do |pos|
+      piece = get_piece(pos)
+
+      yield(result, pos) if piece.team_white == att_team && piece.pawn?
     end
+
+    result.empty? ? false : result
   end
+
+  def king_stub(defender_pos, att_team)
+    result = []
+
+    all_moves = KINGPATHS.map { |dir| possible_move(defender_pos, dir).last }
+    all_moves = all_moves.compact.select { |pos| piece_exists?(pos) }
+
+    all_moves.each do |pos|
+      piece = get_piece(pos)
+
+      yield(result, pos) if piece.team_white == att_team && piece.king?
+    end
+
+    result.empty? ? false : result
+  end
+
 end
