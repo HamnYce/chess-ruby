@@ -38,6 +38,8 @@ module GroupedMovementProcs
   BLACKPAWNPATHS = %i[DOWN DOWNLEFT DOWNRIGHT].freeze
   WHITEPAWNATTPATHS = %i[UPLEFT UPRIGHT].freeze
   BLACKPAWNATTPATHS = %i[DOWNLEFT DOWNRIGHT].freeze
+  WHITEPAWNBLOCKPATHS = %i[UP].freeze
+  BLACKPAWNBLOCKPATHS = %i[DOWN].freeze
 end
 
 # top level documentation
