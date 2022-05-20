@@ -25,13 +25,49 @@ module Checker
     false
   end
 
-  # assuming it's not a knight
-  # check if same team piece can move inbetween the 2 positions (use class to
-  # pick the direction for possible moves)
-  def attack_blockable?(attacker_pos, king_pos, attacker_class); end
+  def all_attacks_blockable?(defender_pos, def_team)
+    all_attackers = find_attackers(defender_pos, !def_team)
 
-  # DOC: check if target pos can be attacked by opposite team
-  def can_be_attacked?(defender_pos, att_team)
+    all_attackers.each do |attackers|
+      attackers.each do |att_pos|
+        return false unless attack_blockable?(defender_pos, att_pos, def_team)
+      end
+    end
+
+    true
+  end
+
+  def attack_blockable?(defender_pos, attacker_pos, def_team)
+    dir = direction(defender_pos, attacker_pos)
+    all_moves = possible_moves(defender_pos, dir)
+
+    # to account for king blocking own move
+    temp_piece = @table[defender_pos[0]][defender_pos[1]]
+    @table[defender_pos[0]][defender_pos[1]] = nil
+
+    all_moves.each do |pos|
+      if under_block?(pos, def_team)
+        @table[defender_pos[0]][defender_pos[1]] = temp_piece
+        return true
+      end
+
+    end
+
+    @table[defender_pos[0]][defender_pos[1]] = temp_piece
+    false
+  end
+
+  def find_attackers(defender_pos, att_team)
+    total = []
+    total.push linear_attackers(defender_pos, STRAIGHTPATHS, att_team)
+    total.push linear_attackers(defender_pos, DIAGPATHS, att_team)
+    total.push pawn_attackers(defender_pos, att_team, true)
+    total.select! { |x| x }
+
+    total
+  end
+
+  def under_attack?(defender_pos, att_team)
     linear_check(defender_pos, STRAIGHTPATHS, att_team) ||
       linear_check(defender_pos, DIAGPATHS, att_team) ||
       knight_check(defender_pos, att_team) ||
