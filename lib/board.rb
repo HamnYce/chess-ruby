@@ -38,7 +38,6 @@ class Board
 
     puts "enter e to exit or positions to move from/to\nformat: a1 a2"
     input = gets.chomp
-
     load_game if input == 'l'
 
     until input[-1] == 'e'
@@ -108,16 +107,13 @@ class Board
     end
 
     # Phase 5 conditions
-    return 'Checkmate!' if checkmate?
+    return 'Checkmate!' if checkmate?(other_king_pos, @curr_player_white)
 
 
     flip_current_player
-
     # maybe move system('clear') into the print function
-    system('clear')
     print_table
-
-    'successful move'
+    ' successful move'
   end
 
   def pawn_reached_end?(pos)
@@ -145,4 +141,4 @@ class Board
   end
 end
 
-b = Board.new
+Board.new
