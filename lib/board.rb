@@ -38,7 +38,14 @@ class Board
       init_pos = parse(input[0])
       fin_pos = parse(input[1])
 
-      puts move(init_pos, fin_pos)
+      status = move(init_pos, fin_pos)
+
+      if status == 'Checkmate!'
+        print_table
+        return 'game ended'
+      else
+        puts status
+      end
 
       puts 'input:'
       input = gets.chomp
