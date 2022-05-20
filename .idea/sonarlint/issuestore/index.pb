@@ -5,7 +5,5 @@ D
 lib/pieces/bishop.rb,1/5/1585ef4de4d373a3cd6ccd95c511aa8f1f5db73f
 B
 lib/pieces/king.rb,b/4/b470a184a0e83dd88121a04ed1fbbc16b082965a
-B
-spec/board_spec.rb,6/1/61be300a19aa2d365a6dfadbcb4896b3b265ec93
 ;
 lib/main.rb,4/e/4e0143f623df0385bdc6415ec0079bd0a7148aed
