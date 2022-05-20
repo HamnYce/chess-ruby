@@ -26,15 +26,7 @@ class Board
     turn
   end
 
-  # TODO: add section on the side that shows captured pieces
-  # TODO: test checkmate (RSpec)
-  # TODO: create save files to test out all the functionalities (later you
-  #   can change / include cool puzzles)
-  # TODO: convert implementation of @table to hash (at the end)
-  # TODO: menu options: create menu (check gui.rb)
-  # TODO: add regex for input to avoid exception raising
-  # TODO: pawn upgrade once it gets to end (create separate menu)
-
+  # TODO: add regex for input
   def turn
     puts "enter e to exit or positions to move from/to\nformat: a1 a2"
     input = gets.chomp
