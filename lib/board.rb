@@ -26,41 +26,54 @@ class Board
     turn
   end
 
-  # TODO: add regex for input
   def turn
-    # 'fast forwarding the game to pawn upgrade position'
-    inputs = 'e2 e4/a7 a6/e4 e5/f7 f6/e5 f6/a6 a5/f6 g7/a5 a4/'
-    inputs.split('/').each do |inp|
-      x = inp.split(' ')
-      move(parse(x[0]), parse(x[1]))
-    end
-    # ----
-
-    puts "enter e to exit or positions to move from/to\nformat: a1 a2"
+    # Menu screen
+    print_intro_menu
     input = gets.chomp
-    load_game if input == 'l'
-
-    until input[-1] == 'e'
-      input = input.split
-      init_pos = parse(input[0])
-      fin_pos = parse(input[1])
-
-      status = move(init_pos, fin_pos)
-
-      if status == 'Checkmate!'
-        print_table
-        return 'game ended'
-      else
-        puts status
-      end
-
-      puts 'input:'
+    until %w[l n e].include?(input.downcase)
+      puts 'input (n / l / e):'
       input = gets.chomp
 
-      save_game if input[0] == 'se'
+      case input
+      when 'l'
+        load_game
+        puts 'Game loaded'
+      when 'n'
+        puts 'New game'
+      end
     end
 
-    puts 'game ended'
+    # game loop
+    print_table unless input.downcase == 'e'
+
+    until input.downcase == 'e'
+
+      input = gets.chomp
+
+      case input.downcase
+      when 's'
+        save_game
+        puts 'Game saved successfully'
+        break
+      when 'e'
+        break
+      when @input_reg
+        moves = input.downcase.split
+        init_pos = parse(moves[0])
+        fin_pos = parse(moves[1])
+
+        status = move(init_pos, fin_pos)
+
+        print_table and return 'Game ended' if status == 'Checkmate!'
+
+        print_table
+        puts status
+      else
+        puts 'keep trying inputs'
+      end
+    end
+
+    puts 'Exiting program. Thank you for playing'
   end
 
   # NOTE: converts from chess notation to pos notation
@@ -72,8 +85,6 @@ class Board
   end
 
   def move(init_pos, fin_pos)
-    # change phases into methods
-
     # Phase 1 conditions
     return response('no piece') unless piece_exists?(init_pos)
 
@@ -112,33 +123,10 @@ class Board
 
     flip_current_player
     # maybe move system('clear') into the print function
-    print_table
-    ' successful move'
+    'Successful move'
   end
 
-  def pawn_reached_end?(pos)
-    @curr_player_white && pos[0] == 0 || !@curr_player_white && pos[0] == 7
-  end
 
-  # FIXME: input validation
-  def upgrade_pawn(pos, team)
-    print_upgrade_screen(team)
-    c = gets.chomp.to_i
-    new_piece = case c
-               when 1
-                Queen.new(team)
-               when 2
-                Rook.new(team)
-               when 3
-                Bishop.new(team)
-               when 4
-                Knight.new(team)
-               else
-                @table[pos[0]][pos[1]]
-               end
-
-    @table[pos[0]][pos[1]] = new_piece
-  end
 end
 
 Board.new
