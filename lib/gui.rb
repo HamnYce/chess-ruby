@@ -17,6 +17,27 @@ module Gui
   BPAWN_ICON = "\u2659"
   #   e (exit), s (save), se (save & exit), l (load), h (help)
   #   create module for saving
+
+
+  def print_intro_menu
+    system('clear')
+    puts "
+    Chess Menu
+    (n) start fresh
+    (l) load saved game
+    (e) exit program
+    "
+  end
+
+  def print_get_input
+    puts "
+    Enter:
+    (s) to save and exit
+    (e) to exit without saving
+    ('a2 a3') to move a piece
+    "
+  end
+
   def print_table
     system('clear')
 
@@ -32,16 +53,18 @@ module Gui
     end
     puts '    a   b   c   d   e   f   g   h '
     puts " Current player: #{@curr_player_white ? 'White' : 'Black'}"
+    print_get_input
+    puts 'input (s / e / b1 c3)'
   end
 
   def response(code)
     { 'wrong team' => "It is currently #{@curr_player_white ? 'White' : 'Black'}'s turn",
-      'no piece' => 'sorry there is no piece at given starting position',
-      'no dir' => 'sorry piece can\'t move in that direction',
-      'not legal' => 'not legal move',
-      'friendly fire' => 'cannot capture own piece',
-      'rogue pawn' => 'pawn cannot move like that',
-      'self check' => 'your own king is in check!'}[code]
+      'no piece' => 'There is no piece at given starting position',
+      'no dir' => 'piece Can\'t move like that',
+      'not legal' => 'illegal move',
+      'friendly fire' => 'friendly fire not enabled (cannot capture own piece)',
+      'rogue pawn' => 'Pawn refuses to move like that',
+      'self check' => 'Your king is under attack!'}[code]
   end
 
   def print_upgrade_screen(team)
