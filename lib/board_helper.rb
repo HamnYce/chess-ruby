@@ -34,10 +34,6 @@ module BoardHelper
     a_piece.team_white == b_piece.team_white
   end
 
-  def other_team?(piece)
-    piece.team_white != @curr_player_white
-  end
-
   def get_piece(pos)
     @table[pos[0]][pos[1]]
   end
@@ -47,7 +43,7 @@ module BoardHelper
   end
 
   def current_king_pos
-    @curr_player_white ? @wking_pos  : @bking_pos
+    @curr_player_white ? @wking_pos : @bking_pos
   end
 
   def other_king_pos
