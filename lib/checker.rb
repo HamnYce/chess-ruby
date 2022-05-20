@@ -4,11 +4,6 @@ require_relative 'movement'
 
 # contains methods to look for check on a given piece
 module Checker
-  # NOTE: can_be_attacked? on the spaces around the king (can king move away?)
-  #   on other_king_pos.
-  #   can_be_attacked? on spaces between king and attacker (can attack be
-  #   blocked)
-  #   can_be_attacked? on attacking piece (can attacker be captured)
   include MovementAlgorithms
   include GroupedMovementProcs
 
@@ -77,9 +72,9 @@ module Checker
 
   def under_attack?(defender_pos, att_team)
     linear_check(defender_pos, STRAIGHTPATHS, att_team) ||
-      linear_check(defender_pos, DIAGPATHS, att_team) ||
+      linear_check(defender_pos, DIAGPATHS, att_team,) ||
       knight_check(defender_pos, att_team) ||
-      pawn_check(defender_pos, att_team) ||
+      pawn_check(defender_pos, att_team, true) ||
       king_check(defender_pos, att_team)
   end
 
