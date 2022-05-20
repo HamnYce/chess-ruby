@@ -23,6 +23,34 @@ module BoardHelper
     direction.to_sym
   end
 
+  def upgrade_pawn(pos, team)
+    c = -1
+
+    until c.between?(1, 4)
+      print_upgrade_screen(team)
+      c = gets.chomp.to_i
+    end
+
+    new_piece = case c
+                when 1
+                  Queen.new(team)
+                when 2
+                  Rook.new(team)
+                when 3
+                  Bishop.new(team)
+                when 4
+                  Knight.new(team)
+                else
+                  @table[pos[0]][pos[1]]
+                end
+
+    @table[pos[0]][pos[1]] = new_piece
+  end
+
+  def pawn_reached_end?(pos)
+    @curr_player_white && pos[0] == 0 || !@curr_player_white && pos[0] == 7
+  end
+
   def legal_pawn_move?(fin_pos, dir)
     (DIAGPATHS.include?(dir) && piece_exists?(fin_pos)) ||
       (%i[UP DOWN].include?(dir) && !piece_exists?(fin_pos))
