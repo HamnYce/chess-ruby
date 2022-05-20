@@ -12,7 +12,11 @@ module Checker
   include MovementAlgorithms
   include GroupedMovementProcs
 
-  def checkmate?; end
+  def checkmate?(king_pos, att_team)
+    under_attack?(king_pos, att_team) &&
+      !king_has_valid_move?(king_pos, att_team) &&
+      !all_attacks_blockable?(king_pos, !att_team)
+  end
 
   def king_has_valid_move?(king_pos, att_team)
     all_moves = KINGPATHS.map { |dir| possible_move(king_pos, dir).last }
