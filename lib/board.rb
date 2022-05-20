@@ -22,7 +22,7 @@ class Board
     @wking_pos = STARTWHITEKING
     @bking_pos = STARTBLACKKING
     @curr_player_white = true
-    print_table
+    @input_reg = /^[a-h][1-8] [a-h][1-8]$/i
     turn
   end
 
