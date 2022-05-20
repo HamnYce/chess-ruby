@@ -18,11 +18,9 @@ class Board
   include BoardHelper
 
   def initialize
-    @table = STARTING_BOARD
-    # @wking_pos = [7, 4]
-    # @bking_pos = [0, 4]
-    @wking_pos = [0, 0]
-    @bking_pos = [2, 0]
+    @table = STARTINGBOARD
+    @wking_pos = STARTWHITEKING
+    @bking_pos = STARTBLACKKING
     @curr_player_white = true
     print_table
     turn

@@ -9,7 +9,9 @@ require_relative 'pieces/rook'
 
 # might convert board 8x8 array to hash (same logic)
 # might store some information in a hash (king positions maybe?)
-STARTING_BOARD = Array.new(8) { Array.new(8, nil) }
+STARTINGBOARD = Array.new(8) { Array.new(8, nil) }
+STARTWHITEKING = []
+STARTBLACKKING = []
 module StartState
   def self.normal
     # Black's side
