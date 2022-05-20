@@ -7,7 +7,7 @@ class Queen
   include Piece
 
   def initialize(team_white)
-    @mov_dir = (STRAIGHTPATHS + DIAGPATHS)
+    @mov_dir = KINGPATHS
     @char_representation = team_white ? WQUEEN_ICON : BQUEEN_ICON
     @team_white = team_white
   end
