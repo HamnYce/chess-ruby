@@ -12,7 +12,7 @@ class Knight
     @team_white = team_white
   end
 
-  def include_dir?(direction)
+  def can_move?(direction)
     direction = "KNIGHT#{direction}".to_sym
     mov_dir.include?(direction)
   end
