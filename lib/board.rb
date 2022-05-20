@@ -28,6 +28,14 @@ class Board
 
   # TODO: add regex for input
   def turn
+    # 'fast forwarding the game to pawn upgrade position'
+    inputs = 'e2 e4/a7 a6/e4 e5/f7 f6/e5 f6/a6 a5/f6 g7/a5 a4/'
+    inputs.split('/').each do |inp|
+      x = inp.split(' ')
+      move(parse(x[0]), parse(x[1]))
+    end
+    # ----
+
     puts "enter e to exit or positions to move from/to\nformat: a1 a2"
     input = gets.chomp
 
@@ -72,11 +80,11 @@ class Board
 
     piece = @table[init_pos[0]][init_pos[1]]
     # Phase 2 conditions
-    return response('wrong team') if other_team?(piece)
+    return response('wrong team') if piece.team_white != @curr_player_white
 
     dir = direction(init_pos, fin_pos)
 
-    return response('no dir') unless piece.include_dir?(dir)
+    return response('no dir') unless piece.can_move?(dir)
 
     p_moves = piece_moves(piece, init_pos, dir)
 
@@ -85,11 +93,11 @@ class Board
     return response('friendly fire') if same_team?(piece, get_piece(fin_pos))
     return response('rogue pawn') if piece.pawn? && !legal_pawn_move?(fin_pos, dir)
 
-
     simulate(init_pos, fin_pos)
 
+
     # Phase 4 conditions
-    if can_be_attacked?(current_king_pos, !@curr_player_white)
+    if under_attack?(current_king_pos, !@curr_player_white)
       revert_simulation
       return response('self check')
     end
