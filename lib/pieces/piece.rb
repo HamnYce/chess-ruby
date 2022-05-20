@@ -28,7 +28,7 @@ module Piece
     @char_representation
   end
 
-  def include_dir?(direction)
+  def can_move?(direction)
     mov_dir.include?(direction)
   end
 
