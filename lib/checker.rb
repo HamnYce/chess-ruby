@@ -14,14 +14,18 @@ module Checker
 
   def checkmate?; end
 
-  def king_can_move?(king_pos)
-    king = get_piece(king_pos)
-    all_moves = KINGPATHS.map { |dir| possible_move(other_king_pos, dir).last }
-    all_moves.compact.each do |pos|
+  def king_has_valid_move?(king_pos, att_team)
+    all_moves = KINGPATHS.map { |dir| possible_move(king_pos, dir).last }
 
-      return true if !can_be_attacked?(pos, !king.team_white) &&
-                     !same_team?(king, get_piece(pos))
+    all_moves.compact.each do |pos|
+      piece = get_piece(pos)
+      if piece
+        return true if piece.team_white == att_team && !under_attack?(pos, att_team)
+      else
+        return true unless under_attack?(pos, att_team)
+      end
     end
+
     false
   end
 
