@@ -32,7 +32,7 @@ class Board
     until %w[l n e].include?(input.downcase)
       print_intro_menu
       puts 'input (n / l / e):'
-      input = gets.chomp
+      input = gets.strip
 
       case input
       when 'l'
@@ -48,7 +48,7 @@ class Board
 
     until input.downcase == 'e'
 
-      input = gets.chomp
+      input = gets.strip
 
       case input.downcase
       when 's'
