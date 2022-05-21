@@ -36,13 +36,19 @@ module Serializer
                        when WROOK_ICON then Rook.new(true)
                        when WBISHOP_ICON then Bishop.new(true)
                        when WKNIGHT_ICON then Knight.new(true)
-                       when WPAWN_ICON then Pawn.new(true)
+                       when WPAWN_ICON
+                         pawn = Pawn.new(true)
+                         pawn.moved if i != 6
+                         pawn
                        when BKING_ICON then King.new(true)
                        when BQUEEN_ICON then Queen.new(false)
                        when BROOK_ICON then Rook.new(false)
                        when BBISHOP_ICON then Bishop.new(false)
                        when BKNIGHT_ICON then Knight.new(false)
-                       when BPAWN_ICON then Pawn.new(false)
+                       when BPAWN_ICON
+                         pawn = Pawn.new(false)
+                         pawn.moved if i != 1
+                         pawn
                        end
       end
     end
