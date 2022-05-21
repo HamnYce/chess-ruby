@@ -27,10 +27,10 @@ class Board
   end
 
   def turn
+    input = ''
     # Menu screen
-    print_intro_menu
-    input = gets.chomp
     until %w[l n e].include?(input.downcase)
+      print_intro_menu
       puts 'input (n / l / e):'
       input = gets.chomp
 

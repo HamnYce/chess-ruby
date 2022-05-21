@@ -11,15 +11,14 @@ module Serializer
       json = { wking_pos: @wking_pos,
                bking_pos: @bking_pos,
                curr_player_white: @curr_player_white,
-               table: @table}.to_json
+               table: @table }.to_json
 
       file.write(json)
     end
   end
 
-  # TODO: loadgame not loading
   def load_game
-    file = File.open('save/save.json')
+    file = File.open('save/save.json', 'r')
     hash = JSON.parse(file.read)
     file.close
 
