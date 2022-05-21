@@ -1,7 +1,7 @@
 # ruby-chess
 
 ## TODO:
-- input validation (turn inputs, pawn upgrade, menu choice)
+- input validation (pawn upgrade)
 - end game screen
 
 ## EXTRA FEATURES (things that will make quality of life easeier):
