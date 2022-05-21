@@ -46,7 +46,7 @@ module Gui
       print "#{8 - i} |"
 
       row.each do |panel|
-        print " #{panel.nil? ? ' ' : panel} |"
+        print " #{panel || ' '} |"
       end
 
       puts "\n   --- --- --- --- --- --- --- ---"
